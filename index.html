@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登出地球計畫 | 宇宙牛馬漩渦</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Orbitron', sans-serif;
+            background-color: #030008;
+            overflow-x: hidden;
+        }
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.7), 0 0 20px rgba(236, 72, 153, 0.4);
+        }
+        .neon-border {
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5), inset 0 0 15px rgba(168, 85, 247, 0.3);
+        }
+        .vortex-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* 蓋章動畫 */
+        @keyframes stamp-bounce {
+            0% { transform: scale(3); opacity: 0; }
+            80% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 8px rgba(236,72,153,0.8)); }
+        }
+        .animate-stamp {
+            animation: stamp-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen text-slate-100 flex flex-col justify-between overflow-hidden select-none">
+
+    <!-- Canvas 內耗黑洞漩渦背景 -->
+    <div class="vortex-container">
+        <canvas id="vortexCanvas"></canvas>
+    </div>
+
+    <!-- 頂部狀態列 -->
+    <header class="relative z-10 w-full px-6 py-4 flex justify-between items-center border-b border-purple-950/40 bg-black/30 backdrop-blur-sm">
+        <div class="flex items-center space-x-3">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
+            <span class="text-xs uppercase tracking-[0.25em] text-pink-500 font-bold font-mono">Status: Connected to Reality</span>
+        </div>
+        <div class="text-xs font-mono text-purple-400">
+            SYSTEM_VERSION: 1.0.0-ALPHA
+        </div>
+    </header>
+
+    <!-- 主交互區 -->
+    <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <div class="text-center max-w-lg mx-auto mb-6">
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 uppercase font-mono mb-2">
+                LOGGING OUT OF EARTH
+            </h1>
+            <p class="text-sm md:text-base text-purple-300 font-light mb-1">
+                「你正在被日復一日的內耗黑洞吞噬嗎？」
+            </p>
+            <p class="text-xs text-slate-500 font-mono">
+                ARE YOU GETTING SUCKED INTO THE BURNOUT BLACK HOLE?
+            </p>
+        </div>
+
+        <!-- 登出大按鈕 -->
+        <div class="relative group my-8">
+            <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+            <button id="logoutBtn" class="relative w-40 h-40 md:w-48 md:h-48 rounded-full bg-slate-950 border-4 border-pink-500 flex flex-col items-center justify-center text-center transition-all active:scale-95 duration-100 focus:outline-none z-10 neon-border hover:shadow-[0_0_30px_rgba(236,72,153,0.6)] cursor-pointer">
+                <!-- 偽火箭Icon -->
+                <svg id="rocketIcon" class="w-12 h-12 text-pink-500 mb-2 transition-transform duration-300 group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+                <span class="text-2xl md:text-3xl font-black tracking-widest text-white neon-glow">登出</span>
+                <span class="text-[10px] font-mono tracking-widest text-pink-400 mt-1 uppercase" id="btnSubText">Press to Launch</span>
+            </button>
+        </div>
+
+        <!-- 30天自由護照航線進度條 -->
+        <div class="relative w-full max-w-xl px-6 py-4 bg-slate-950/80 border border-purple-900/40 rounded-2xl backdrop-blur-md">
+            <div class="flex justify-between items-center text-xs text-purple-400 font-mono mb-3">
+                <span class="font-bold">FREEDOM PASSPORT PROGRESS</span>
+                <span id="progressText" class="text-pink-500 font-bold">0 / 30 DAYS</span>
+            </div>
+            
+            <!-- 進度條 -->
+            <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-purple-950/50 mb-6">
+                <div id="progressBar" class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-0 transition-all duration-500"></div>
+            </div>
+
+            <!-- 航線節點說明 -->
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div id="phase1" class="p-2 rounded bg-slate-900/50 border border-slate-800 transition-colors">
+                    <div class="text-xs font-bold text-slate-300 font-mono">Day 1</div>
+                    <div class="text-[10px] text-slate-500 mt-1">重力拉扯<br><span class="text-[9px] font-mono">Gravity Pulls</span></div>
+                </div>
+                <div id="phase2" class="p-2 rounded bg-slate-900/50 border border-slate-800 transition-colors">
+                    <div class="text-xs font-bold text-slate-300 font-mono">Day 10</div>
+                    <div class="text-[10px] text-slate-500 mt-1">軌道建立<br><span class="text-[9px] font-mono">Orbit Estab.</span></div>
+                </div>
+                <div id="phase3" class="p-2 rounded bg-slate-900/50 border border-slate-800 transition-colors">
+                    <div class="text-xs font-bold text-slate-300 font-mono">Day 30</div>
+                    <div class="text-[10px] text-slate-500 mt-1">自由飛行<br><span class="text-[9px] font-mono">Free Flight</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部操作/功能區 -->
+    <footer class="relative z-10 w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-black/40 border-t border-purple-950/30 text-xs text-slate-500 font-mono">
+        <div>
+            © 2026 PROJECT: COSMIC SALARYMAN VORTEX
+        </div>
+        <div class="flex items-center space-x-4">
+            <button id="cheatBtn" class="px-2 py-1 bg-purple-950/40 border border-purple-900/40 hover:bg-purple-900/60 hover:text-purple-300 text-purple-500 rounded transition-colors" title="快速模擬多天簽到以便調試">
+                ⚡ 時空傳送 (Debug)
+            </button>
+            <button id="resetBtn" class="px-2 py-1 bg-red-950/20 border border-red-900/30 hover:bg-red-900/40 hover:text-red-300 text-red-500 rounded transition-colors">
+                ⚠️ 重置紀錄
+            </button>
+        </div>
+    </footer>
+
+    <!-- ==================== 彈出卡片模組 (登出成功傳輸單) ==================== -->
+    <div id="stampModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="relative w-full max-w-md bg-gradient-to-b from-slate-950 to-slate-900 border-2 border-pink-500/80 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(236,72,153,0.3)]">
+            
+            <!-- 裝飾邊角 -->
+            <div class="absolute top-4 left-4 text-[10px] font-mono text-purple-500/50">COSMIC PASSPORT v1.0</div>
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-mono focus:outline-none bg-slate-900/80 w-8 h-8 rounded-full flex items-center justify-center border border-slate-800 cursor-pointer">&times;</button>
+
+            <!-- 卡片核心內容 -->
+            <div class="text-center mt-4">
+                <div class="inline-block px-3 py-1 bg-pink-950/40 border border-pink-500/30 text-pink-400 text-xs font-mono rounded-full uppercase tracking-wider mb-4">
+                    Daily Logout Voucher
+                </div>
+                
+                <h2 class="text-xl font-bold tracking-widest text-slate-100 mb-1">地球登出成功傳輸單</h2>
+                <p id="transmissionDate" class="text-[10px] text-slate-500 font-mono uppercase mb-6">STARDATE: 2026.05.19-02:28</p>
+
+                <!-- 誓言金句看板 -->
+                <div class="relative p-6 bg-slate-900/80 border border-purple-900/30 rounded-2xl mb-6 overflow-hidden min-h-[120px] flex flex-col justify-center items-center">
+                    <!-- 背景微弱浮水印 -->
+                    <div class="absolute inset-0 flex items-center justify-center text-8xl font-black text-slate-950/20 pointer-events-none select-none select-none font-mono">LOGOUT</div>
+                    <!-- 蓋章層 -->
+                    <div class="absolute top-2 right-4 w-20 h-20 pointer-events-none z-10 flex items-center justify-center">
+                        <div id="passportStamp" class="w-16 h-16 border-2 border-dashed border-pink-500 text-pink-500 font-black rounded-full text-xs flex items-center justify-center transform rotate-12 scale-150 opacity-0 uppercase tracking-tighter">
+                            STAMPED
+                        </div>
+                    </div>
+                    <!-- 隨機金句內容 -->
+                    <p id="quoteContent" class="text-base md:text-lg font-bold text-slate-100 leading-relaxed z-10 text-center px-2">
+                        「今天沒對主管翻白眼，重力稍微減輕了 5%。」
+                    </p>
+                </div>
+
+                <!-- 登出指數分析 -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-left">
+                        <span class="text-[9px] text-slate-500 font-mono block uppercase">今日自由指數</span>
+                        <span id="statFreedom" class="text-lg font-black font-mono text-emerald-400">82%</span>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-left">
+                        <span class="text-[9px] text-slate-500 font-mono block uppercase">內耗殘留度</span>
+                        <span id="statBurnout" class="text-lg font-black font-mono text-rose-500">18%</span>
+                    </div>
+                </div>
+
+                <!-- 回饋訊息 -->
+                <p id="congratsMessage" class="text-xs text-indigo-400 font-medium mb-6">
+                    你與地球的距離增加了 100 萬光年 🚀
+                </p>
+
+                <!-- 社群傳播召喚按鈕 -->
+                <div class="flex flex-col gap-2">
+                    <button id="copyBtn" class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold rounded-xl transition-all shadow-[0_4px_15px_rgba(236,72,153,0.3)] hover:shadow-[0_4px_25px_rgba(236,72,153,0.5)] tracking-wide flex items-center justify-center space-x-2 text-sm">
+                        <span>複製今日登出證明（分享 Threads）</span>
+                    </button>
+                    <p class="text-[9px] text-slate-500 font-mono">「欸幹這好酷，分享給另一個牛馬」</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 30天通關登出地球大結局動畫層 ==================== -->
+    <div id="finalEndingScreen" class="fixed inset-0 bg-[#020006] z-[99] flex flex-col items-center justify-center p-6 text-center opacity-0 pointer-events-none transition-all duration-1000">
+        <!-- 絢麗無比的宇宙自由星空背景 -->
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)]"></div>
+        
+        <div class="relative z-10 max-w-lg mx-auto">
+            <!-- 自由大火箭 -->
+            <div class="text-7xl mb-6 animate-bounce">🚀</div>
+            <h1 class="text-4xl md:text-5xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-emerald-400 to-indigo-400 font-mono mb-4">
+                CONGRATS!
+            </h1>
+            <h2 class="text-2xl font-bold text-white mb-6">你已成功徹底登出地球！</h2>
+            <div class="p-6 bg-slate-900/60 border border-emerald-500/30 rounded-2xl mb-8 backdrop-blur-md">
+                <p class="text-emerald-400 font-bold text-lg mb-2">「歡迎來到自由星雲」</p>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    在這裡，沒有 DDL，沒有主管的 ASAP 奪命連環叩，也沒有任何一頁 PPT。你的靈魂質量已經完全化為自由的純能。你不再是社畜，你是一顆恆星。
+                </p>
+            </div>
+            <button id="finalResetBtn" class="px-6 py-3 bg-gradient-to-r from-teal-500 to-indigo-600 text-white font-bold rounded-xl transition-all hover:scale-105">
+                回歸地球重新登出 (重置宇宙)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 1. 牛馬金句資料庫 ====================
+        const goldQuotes = [
+            "今天沒對主管翻白眼，重力稍微減輕了 5%。",
+            "只要我不努力，老闆就過不上他想要的生活。",
+            "能用錢解決的問題我都解決不了，除了「沒錢」這個問題。",
+            "所謂工作，就是拿我的時間，去換老闆的豪車輪胎。",
+            "今天也是個溫室裡的小草呢，不想曬太陽，只想躺平。",
+            "垃圾放著會自動分解，但我的工作放著只會自動增加。",
+            "每天起床睜開眼，就有一股強烈的「今天不適合工作」的直覺。",
+            "辦公室的空氣裡，80% 是焦慮，20% 是對午餐吃什麼的沉思。",
+            "我不是在上班，我是在進行一場漫長且無給薪的靈魂超渡。",
+            "你已成功穿過對流層，主管的長語音訊息開始因電磁干擾出現雜音。",
+            "今天沒在會議上翻桌，自由航線向前推進了 15 萬公里！",
+            "如果老闆說這是一座大舞台，那我就是上台負責掃地的。 🧹",
+            "不要跟我談夢想，我的夢想就是不工作。",
+            "一到週一我就得了『不休息就會融化』的怪病。",
+            "世界上最美麗的謊言：『再努力一下就快到了』。",
+            "人生就像一盤散沙，不用風吹，再多開一場會就會散了。",
+            "我的身體在辦公室，但我的靈魂正在火星上吃爆米花。 🍿",
+            "今天的自由值大爆發，因為我拒絕了一個非緊急的 ASAP！",
+            "我的特長：在『收到』和『謝謝老闆』之間保持絕對的冷漠。",
+            "上班像是在坐牢，但我比囚犯更慘，因為我還要自己付房租。",
+            "主管說要把這裡當成家，那我可以睡到下午兩點再穿睡衣開會嗎？",
+            "內耗是地心引力的本質，而拒絕內耗就是你的反重力引擎。",
+            "今天成功登出內耗 5 分鐘，恭喜你與地球的距離增加了 100 萬光年。",
+            "今天忍住了沒有主動搶工作，這是我對宇宙自由最大的貢獻。",
+            "如果你看見我在發呆，別吵，那是我靈魂脫體在進行宇宙逃逸。",
+            "今日金句：『算了吧、沒差、隨便啦』，內耗防禦罩全面啟動！",
+            "別催了，再催我就要啟動量子疊加態上班法：人在，但腦子已經碎了。",
+            "只要心態夠平，就沒有任何人可以打倒我（因為我已經躺在地上）。",
+            "老闆說我的上限很高，但我的生命值現在只剩 2%。",
+            "你已看破地球紅塵。即刻升空！三十天征途的終點，就是無盡的星辰大海。"
+        ];
+
+        // ==================== 2. Canvas 內耗黑洞背景引擎 ====================
+        const canvas = document.getElementById('vortexCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        let trashTexts = ["KPI", "DDL", "ASAP", "加班", "開會", "報告", "PPT", "Excel", "老闆訊息", "績效考核", "週報", "焦慮", "內耗"];
+        let vortexSpeed = 1; 
+        let isSpinningFast = false;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                // 從螢幕邊緣或外圍生成
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.max(canvas.width, canvas.height) * (0.4 + Math.random() * 0.4);
+                this.x = canvas.width / 2 + Math.cos(angle) * distance;
+                this.y = canvas.height / 2 + Math.sin(angle) * distance;
+                this.angle = angle;
+                this.radius = distance;
+                this.speed = (0.002 + Math.random() * 0.006);
+                this.radialSpeed = (0.5 + Math.random() * 1.5);
+                this.size = Math.random() * 1.5 + 0.5;
+                this.color = `hsla(${260 + Math.random() * 60}, 80%, 50%, ${Math.random() * 0.4 + 0.2})`;
+                this.isText = Math.random() < 0.15; // 15% 概率是內耗文字
+                this.text = trashTexts[Math.floor(Math.random() * trashTexts.length)];
+                this.textSize = Math.floor(Math.random() * 10 + 10);
+                this.opacity = 1;
+            }
+
+            update() {
+                const speedMultiplier = isSpinningFast ? 6 : vortexSpeed;
+                this.angle -= this.speed * speedMultiplier;
+                this.radius -= this.radialSpeed * speedMultiplier;
+
+                // 更新坐標
+                this.x = canvas.width / 2 + Math.cos(this.angle) * this.radius;
+                this.y = canvas.height / 2 + Math.sin(this.angle) * this.radius;
+
+                // 越靠近中心，透明度越低，最後消失重置
+                if (this.radius < 50) {
+                    this.reset();
+                } else if (this.radius < 200) {
+                    this.opacity = (this.radius - 50) / 150;
+                } else {
+                    this.opacity = 1;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                if (this.isText) {
+                    ctx.font = `${this.textSize}px 'Noto Sans TC'`;
+                    ctx.fillStyle = isSpinningFast ? '#ec4899' : '#8b5cf6';
+                    ctx.fillText(this.text, this.x, this.y);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = isSpinningFast ? 10 : 0;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        // 初始化粒子群
+        function initParticles() {
+            particles = [];
+            const count = Math.min(120, Math.floor((canvas.width * canvas.height) / 10000));
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function animate() {
+            ctx.fillStyle = 'rgba(3, 0, 8, 0.15)'; // 拖尾尾跡效果
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 繪製黑洞中心極簡亮光
+            const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 5, canvas.width/2, canvas.height/2, 100);
+            grad.addColorStop(0, 'rgba(0,0,0,1)');
+            grad.addColorStop(0.3, 'rgba(236,72,153,0.05)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(canvas.width/2, canvas.height/2, 100, 0, Math.PI*2);
+            ctx.fill();
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ==================== 3. 網頁音效合成器 (Web Audio API) ====================
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // 蓋章重擊聲
+        function playStampSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                
+                // 重音鼓聲
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+                
+                gain.gain.setValueAtTime(1.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+
+                // 金屬高頻敲擊餘音 (模擬鋼印)
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(800, now);
+                osc2.frequency.exponentialRampToValueAtTime(400, now + 0.1);
+                
+                gain2.gain.setValueAtTime(0.3, now);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now);
+                osc2.stop(now + 0.15);
+            } catch(e) {
+                console.log("Audio not supported or blocked by browser policies.");
+            }
+        }
+
+        // 火箭起飛加速聲
+        function playLaunchSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(60, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.8);
+                
+                gain.gain.setValueAtTime(0.01, now);
+                gain.gain.linearRampToValueAtTime(0.4, now + 0.2);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                
+                // 低通濾波器，讓聲音更有科技風沉悶質感
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1000, now);
+                filter.frequency.exponentialRampToValueAtTime(200, now + 0.8);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.8);
+            } catch(e) {
+                console.log(e);
+            }
+        }
+
+        // ==================== 4. 產品邏輯與狀態管理 ====================
+        let currentDay = parseInt(localStorage.getItem('logout_day_v1') || '0');
+        let lastLoggedDate = localStorage.getItem('logout_last_date_v1') || '';
+
+        const logoutBtn = document.getElementById('logoutBtn');
+        const rocketIcon = document.getElementById('rocketIcon');
+        const btnSubText = document.getElementById('btnSubText');
+        const progressText = document.getElementById('progressText');
+        const progressBar = document.getElementById('progressBar');
+        
+        const phase1 = document.getElementById('phase1');
+        const phase2 = document.getElementById('phase2');
+        const phase3 = document.getElementById('phase3');
+
+        const stampModal = document.getElementById('stampModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const quoteContent = document.getElementById('quoteContent');
+        const passportStamp = document.getElementById('passportStamp');
+        const transmissionDate = document.getElementById('transmissionDate');
+        const statFreedom = document.getElementById('statFreedom');
+        const statBurnout = document.getElementById('statBurnout');
+        const congratsMessage = document.getElementById('congratsMessage');
+        const copyBtn = document.getElementById('copyBtn');
+        
+        const finalEndingScreen = document.getElementById('finalEndingScreen');
+        const finalResetBtn = document.getElementById('finalResetBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const cheatBtn = document.getElementById('cheatBtn');
+
+        // 更新畫面上的進度
+        function updateProgressUI() {
+            progressText.innerText = `${currentDay} / 30 DAYS`;
+            const percentage = Math.min(100, (currentDay / 30) * 100);
+            progressBar.style.width = `${percentage}%`;
+
+            // 亮起不同階段
+            phase1.className = "p-2 rounded bg-slate-900/50 border border-slate-800 transition-colors";
+            phase2.className = "p-2 rounded bg-slate-900/50 border border-slate-800 transition-colors";
+            phase3.className = "p-2 rounded bg-slate-900/50 border border-slate-800 transition-colors";
+
+            if (currentDay >= 1) {
+                phase1.className = "p-2 rounded bg-pink-950/20 border border-pink-500/30 transition-colors text-pink-400";
+            }
+            if (currentDay >= 10) {
+                phase2.className = "p-2 rounded bg-purple-950/20 border border-purple-500/30 transition-colors text-purple-400";
+            }
+            if (currentDay >= 30) {
+                phase3.className = "p-2 rounded bg-indigo-950/20 border border-indigo-500/30 transition-colors text-indigo-400";
+            }
+
+            // 按鈕狀態微調
+            const todayStr = getTodayString();
+            if (lastLoggedDate === todayStr) {
+                btnSubText.innerText = "TODAY LOGGED";
+                logoutBtn.classList.add('border-purple-600', 'opacity-80');
+                logoutBtn.classList.remove('border-pink-500');
+            } else {
+                btnSubText.innerText = "Press to Launch";
+                logoutBtn.classList.add('border-pink-500');
+                logoutBtn.classList.remove('border-purple-600', 'opacity-80');
+            }
+        }
+
+        function getTodayString() {
+            const d = new Date();
+            return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+        }
+
+        // ==================== 5. 交互行為 ====================
+
+        // 點擊「登出」
+        logoutBtn.addEventListener('click', () => {
+            const todayStr = getTodayString();
+
+            // 如果今天簽過了（但在測試階段可以允許重複簽到，為體驗好所以不硬性阻擋，只給文字暗示）
+            if (lastLoggedDate === todayStr) {
+                // 為了好玩，依然讓使用者能夠再次體驗，只是不增加天數
+            }
+
+            // 播放發射音效
+            playLaunchSound();
+            
+            // 視覺震波、黑洞加速
+            isSpinningFast = true;
+            logoutBtn.classList.add('scale-95', 'duration-75');
+            rocketIcon.classList.add('-translate-y-12', 'opacity-0');
+
+            setTimeout(() => {
+                isSpinningFast = false;
+                logoutBtn.classList.remove('scale-95', 'duration-75');
+                rocketIcon.classList.remove('-translate-y-12', 'opacity-0');
+                
+                // 更新邏輯狀態
+                if (lastLoggedDate !== todayStr) {
+                    currentDay++;
+                    lastLoggedDate = todayStr;
+                    localStorage.setItem('logout_day_v1', currentDay);
+                    localStorage.setItem('logout_last_date_v1', lastLoggedDate);
+                    updateProgressUI();
+                }
+
+                // 打開結果彈窗
+                openStampPassport();
+            }, 800);
+        });
+
+        // 打開護照
+        function openStampPassport() {
+            // 設定亂數金句
+            const quoteIndex = Math.min(goldQuotes.length - 1, currentDay - 1 >= 0 ? currentDay - 1 : Math.floor(Math.random() * goldQuotes.length));
+            quoteContent.innerText = `「${goldQuotes[quoteIndex]}」`;
+
+            // 時間戳
+            const now = new Date();
+            transmissionDate.innerText = `STARDATE: ${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            // 生成隨機指數
+            const freedomVal = Math.floor(Math.random() * 20) + 70 + Math.min(10, Math.floor(currentDay / 3)); // 隨著天數上升自由度上升
+            const burnoutVal = 100 - freedomVal;
+            statFreedom.innerText = `${freedomVal}%`;
+            statBurnout.innerText = `${burnoutVal}%`;
+
+            // 設定距離訊息
+            const distance = currentDay * 100 + Math.floor(Math.random() * 80);
+            congratsMessage.innerText = `你與地球的距離增加了 ${distance} 萬光年 🚀`;
+
+            // 顯現彈窗
+            stampModal.classList.remove('pointer-events-none', 'opacity-0');
+            stampModal.classList.add('opacity-100');
+
+            // 延遲落印與聲音
+            setTimeout(() => {
+                passportStamp.className = "w-16 h-16 border-2 border-dashed border-pink-500 text-pink-500 font-black rounded-full text-xs flex items-center justify-center transform rotate-12 scale-100 opacity-100 animate-stamp uppercase tracking-tighter";
+                playStampSound();
+            }, 500);
+        }
+
+        // 關閉護照彈窗
+        closeModalBtn.addEventListener('click', () => {
+            stampModal.classList.add('pointer-events-none', 'opacity-0');
+            stampModal.classList.remove('opacity-100');
+            passportStamp.className = "w-16 h-16 border-2 border-dashed border-pink-500 text-pink-500 font-black rounded-full text-xs flex items-center justify-center transform rotate-12 scale-150 opacity-0 uppercase tracking-tighter";
+            
+            // 檢查是否集滿30天觸發終極結局
+            if (currentDay >= 30) {
+                setTimeout(() => {
+                    triggerFinalEnding();
+                }, 400);
+            }
+        });
+
+        // 觸發終極大結局
+        function triggerFinalEnding() {
+            finalEndingScreen.classList.remove('pointer-events-none', 'opacity-0');
+            finalEndingScreen.classList.add('opacity-100');
+        }
+
+        // 複製分享文案
+        copyBtn.addEventListener('click', () => {
+            const quoteText = quoteContent.innerText;
+            const shareText = `【🌌 地球登出成功傳輸單】\n\n今天是我嘗試登出地球的第 ${currentDay} 天。\n今日自由指數：${statFreedom.innerText} | 內耗殘留：${statBurnout.innerText}\n\n今日誓言：\n${quoteText}\n\n🛰️ 離地距離：${congratsMessage.innerText.split(' ')[4] || '1000'}萬光年。\n你也想登出地球嗎？一起加入宇宙牛馬漩渦吧。`;
+            
+            navigator.clipboard.writeText(shareText).then(() => {
+                copyBtn.innerText = "✅ 複製成功！趕快去貼上 Threads 吧！";
+                copyBtn.classList.remove('from-pink-500', 'to-purple-600');
+                copyBtn.classList.add('from-emerald-600', 'to-teal-600');
+                setTimeout(() => {
+                    copyBtn.innerText = "複製今日登出證明（分享 Threads）";
+                    copyBtn.classList.add('from-pink-500', 'to-purple-600');
+                    copyBtn.classList.remove('from-emerald-600', 'to-teal-600');
+                }, 2000);
+            }).catch(err => {
+                alert("複製失敗，請手動複製喔！");
+            });
+        });
+
+        // ==================== 6. Debug 調試與重置按鈕 ====================
+        
+        // 快速模擬下一天
+        cheatBtn.addEventListener('click', () => {
+            currentDay = (currentDay + 1) > 30 ? 30 : currentDay + 1;
+            // 解除今日簽過限制以便連續調試
+            lastLoggedDate = '';
+            localStorage.setItem('logout_day_v1', currentDay);
+            localStorage.removeItem('logout_last_date_v1');
+            updateProgressUI();
+            
+            // 觸發一次登出點擊
+            logoutBtn.click();
+        });
+
+        // 重置宇宙紀錄
+        function resetUniverse() {
+            currentDay = 0;
+            lastLoggedDate = '';
+            localStorage.removeItem('logout_day_v1');
+            localStorage.removeItem('logout_last_date_v1');
+            updateProgressUI();
+            finalEndingScreen.classList.add('pointer-events-none', 'opacity-0');
+            finalEndingScreen.classList.remove('opacity-100');
+        }
+
+        resetBtn.addEventListener('click', () => {
+            if(confirm("確定要抹除你在銀河系中的所有登出記錄，重新當個乖乖聽話的地球牛馬嗎？")) {
+                resetUniverse();
+            }
+        });
+
+        finalResetBtn.addEventListener('click', resetUniverse);
+
+        // 頁面初始化
+        updateProgressUI();
+    </script>
+</body>
+</html>
