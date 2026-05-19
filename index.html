@@ -54,7 +54,7 @@
             <span class="text-xs uppercase tracking-[0.25em] text-pink-500 font-bold font-mono">Status: Connected to Reality</span>
         </div>
         <div class="text-xs font-mono text-purple-400">
-            SYSTEM_VERSION: 1.1.0-STABLE
+            SYSTEM_VERSION: 1.2.0-FREEFLIGHT
         </div>
     </header>
 
@@ -65,10 +65,10 @@
                 LOGGING OUT OF EARTH
             </h1>
             <p class="text-sm md:text-base text-purple-300 font-light mb-1">
-                「你正在被日復一日的內耗黑洞吞噬嗎？」
+                宇宙牛馬內耗黑洞 · 30天自由航線模擬器
             </p>
             <p class="text-xs text-slate-500 font-mono">
-                ARE YOU GETTING SUCKED INTO THE BURNOUT BLACK HOLE?
+                A MICRO-INTERACTION TO RECLAIM YOUR SOUL.
             </p>
         </div>
 
@@ -76,12 +76,12 @@
         <div class="relative group my-4">
             <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
             <button id="logoutBtn" class="relative w-36 h-36 md:w-44 md:h-44 rounded-full bg-slate-950 border-4 border-pink-500 flex flex-col items-center justify-center text-center transition-all active:scale-95 duration-100 focus:outline-none z-10 neon-border hover:shadow-[0_0_30px_rgba(236,72,153,0.6)] cursor-pointer">
-                <!-- 偽火箭Icon -->
+                <!-- 火箭Icon -->
                 <svg id="rocketIcon" class="w-10 h-10 text-pink-500 mb-2 transition-transform duration-300 group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                 </svg>
                 <span class="text-2xl md:text-3xl font-black tracking-widest text-white neon-glow">登出</span>
-                <span class="text-[9px] font-mono tracking-widest text-pink-400 mt-1 uppercase" id="btnSubText">Press to Launch</span>
+                <span class="text-[9px] font-mono tracking-widest text-pink-400 mt-1 uppercase" id="btnSubText">Launch Day 1</span>
             </button>
         </div>
 
@@ -116,10 +116,10 @@
                 </div>
             </div>
 
-            <!-- 30天通關護照收集印章格 (回溯核心) -->
+            <!-- 30天通關護照收集印章格 -->
             <div class="mt-4 pt-4 border-t border-purple-950/30">
                 <div class="flex items-center justify-between text-[11px] text-purple-400 font-mono mb-2 px-1">
-                    <span class="font-bold flex items-center gap-1">📖 宇宙逃逸護照 (點擊印章可回溯金句)</span>
+                    <span class="font-bold flex items-center gap-1">📖 宇宙逃逸護照 (點擊印章回溯金句)</span>
                     <span class="text-slate-500">CLICK STAMP TO RETRO</span>
                 </div>
                 <div id="stampGrid" class="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
@@ -149,7 +149,7 @@
         <div class="relative w-full max-w-md bg-gradient-to-b from-slate-950 to-slate-900 border-2 border-pink-500/80 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(236,72,153,0.3)]">
             
             <!-- 裝飾邊角 -->
-            <div class="absolute top-4 left-4 text-[10px] font-mono text-purple-500/50" id="modalCornerTag">COSMIC PASSPORT v1.1</div>
+            <div class="absolute top-4 left-4 text-[10px] font-mono text-purple-500/50" id="modalCornerTag">COSMIC PASSPORT v1.2</div>
             <button id="closeModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-mono focus:outline-none bg-slate-900/80 w-8 h-8 rounded-full flex items-center justify-center border border-slate-800 cursor-pointer">&times;</button>
 
             <!-- 卡片核心內容 -->
@@ -159,7 +159,7 @@
                 </div>
                 
                 <h2 id="modalTitle" class="text-xl font-bold tracking-widest text-slate-100 mb-1">地球登出成功傳輸單</h2>
-                <p id="transmissionDate" class="text-[10px] text-slate-500 font-mono uppercase mb-6">STARDATE: 2026.05.19-02:28</p>
+                <p id="transmissionDate" class="text-[10px] text-slate-500 font-mono uppercase mb-6">STARDATE: 2026.05.19-15:00</p>
 
                 <!-- 誓言金句看板 -->
                 <div class="relative p-6 bg-slate-900/80 border border-purple-900/30 rounded-2xl mb-6 overflow-hidden min-h-[120px] flex flex-col justify-center items-center">
@@ -230,9 +230,9 @@
     </div>
 
     <script>
-        // ==================== 1. 牛馬金句資料庫 (共 30 句，與 30 天完美 1-to-1 對應) ====================
+        // ==================== 1. 牛馬隨機金句資料庫 (還原為純粹、毒舌的30句精華) ====================
         const goldQuotes = [
-            "今天沒對主管翻白眼，重力稍微減輕了 5%。",
+            "今天沒對主管翻白眼，重力稍微減輕了 5%。 🚀",
             "只要我不努力，老闆就過不上他想要的生活。",
             "能用錢解決的問題我都解決不了，除了「沒錢」這個問題。",
             "所謂工作，就是拿我的時間，去換老闆的豪車輪胎。",
@@ -449,23 +449,21 @@
         }
 
         // ==================== 4. 產品邏輯與狀態管理 ====================
-        let currentDay = parseInt(localStorage.getItem('logout_day_v1') || '0');
-        let lastLoggedDate = localStorage.getItem('logout_last_date_v1') || '';
+        let currentDay = parseInt(localStorage.getItem('logout_day_v1_unlocked') || '0');
         let logoutHistory = [];
 
-        // 讀取歷史紀錄並修復（如果使用者有舊天數但無歷史，則自動幫他生成歷史補上，確保體驗）
+        // 讀取歷史紀錄
         try {
-            logoutHistory = JSON.parse(localStorage.getItem('logout_history_v1') || '[]');
+            logoutHistory = JSON.parse(localStorage.getItem('logout_history_v1_unlocked') || '[]');
         } catch(e) {
             logoutHistory = [];
         }
 
+        // 歷史修補
         if (logoutHistory.length === 0 && currentDay > 0) {
-            // 自動追溯與修補
             for (let i = 1; i <= currentDay; i++) {
                 const mockDate = new Date();
                 mockDate.setDate(mockDate.getDate() - (currentDay - i));
-                // 隨機抽選金句
                 const randomQuote = goldQuotes[Math.floor(Math.random() * goldQuotes.length)];
                 logoutHistory.push({
                     day: i,
@@ -476,7 +474,7 @@
                     distance: i * 100 + Math.floor(Math.random() * 80)
                 });
             }
-            localStorage.setItem('logout_history_v1', JSON.stringify(logoutHistory));
+            localStorage.setItem('logout_history_v1_unlocked', JSON.stringify(logoutHistory));
         }
 
         const logoutBtn = document.getElementById('logoutBtn');
@@ -516,8 +514,7 @@
                 button.className = "aspect-square flex flex-col items-center justify-center rounded-lg border text-[10px] font-mono font-bold transition-all duration-200 relative group";
                 
                 if (i <= currentDay) {
-                    // 已解鎖印章
-                    button.classList.add('bg-pink-950/20', 'border-pink-500/50', 'text-pink-400', 'hover:bg-pink-500/20', 'hover:border-pink-500', 'cursor-pointer', 'active:scale-95');
+                    button.className += ' bg-pink-950/20 border-pink-500/50 text-pink-400 hover:bg-pink-500/20 hover:border-pink-500 cursor-pointer active:scale-95';
                     button.innerHTML = `
                         <span class="text-xs">🚀</span>
                         <span class="mt-0.5 text-[8px]">D${i}</span>
@@ -527,8 +524,7 @@
                         viewHistoricalVoucher(i);
                     });
                 } else {
-                    // 未解鎖格子
-                    button.classList.add('bg-slate-950/60', 'border-slate-800/80', 'text-slate-600', 'cursor-not-allowed');
+                    button.className += ' bg-slate-950/60 border-slate-800/80 text-slate-600 cursor-not-allowed';
                     button.innerHTML = `
                         <span class="text-[9px]">🔒</span>
                         <span class="mt-0.5 text-[8px] text-slate-700">D${i}</span>
@@ -539,7 +535,7 @@
             }
         }
 
-        // 更新畫面上的進度
+        // 更新畫面上的進度與大按鈕文字
         function updateProgressUI() {
             progressText.innerText = `${currentDay} / 30 DAYS`;
             const percentage = Math.min(100, (currentDay / 30) * 100);
@@ -560,43 +556,32 @@
                 phase3.className = "p-2 rounded bg-indigo-950/20 border border-indigo-500/30 transition-colors text-indigo-400";
             }
 
-            // 按鈕狀態微調
-            const todayStr = getTodayString();
-            if (lastLoggedDate === todayStr) {
-                btnSubText.innerText = "TODAY LOGGED (REVIEW)";
-                logoutBtn.classList.add('border-purple-600', 'opacity-90');
+            // 更新大按鈕下方的提示（顯示下一步是第幾天）
+            if (currentDay >= 30) {
+                btnSubText.innerText = "FULLY LOGGED OUT";
+                logoutBtn.classList.add('border-indigo-500');
                 logoutBtn.classList.remove('border-pink-500');
             } else {
-                btnSubText.innerText = "Press to Launch";
+                btnSubText.innerText = `Launch Day ${currentDay + 1}`;
                 logoutBtn.classList.add('border-pink-500');
-                logoutBtn.classList.remove('border-purple-600', 'opacity-90');
+                logoutBtn.classList.remove('border-indigo-500');
             }
 
-            // 重新刷新印章格子
             renderStampGrid();
-        }
-
-        function getTodayString() {
-            const d = new Date();
-            return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
         }
 
         // ==================== 5. 交互行為 ====================
 
-        // 點擊「登出」
+        // 點擊「登出」（無防作弊、無日期限制，可無限升天！）
         logoutBtn.addEventListener('click', () => {
-            const todayStr = getTodayString();
-
-            // 如果今天已經簽到過，就直接查看今日已解鎖的證明
-            if (lastLoggedDate === todayStr) {
-                viewHistoricalVoucher(currentDay);
+            if (currentDay >= 30) {
+                // 已全滿，點擊直接觸發大結局，或重置
+                triggerFinalEnding();
                 return;
             }
 
-            // 撥放發射音效
             playLaunchSound();
             
-            // 視覺震波、黑洞加速
             isSpinningFast = true;
             logoutBtn.classList.add('scale-95', 'duration-75');
             rocketIcon.classList.add('-translate-y-12', 'opacity-0');
@@ -606,11 +591,10 @@
                 logoutBtn.classList.remove('scale-95', 'duration-75');
                 rocketIcon.classList.remove('-translate-y-12', 'opacity-0');
                 
-                // 累積新天數
+                // 累積天數
                 currentDay++;
-                lastLoggedDate = todayStr;
                 
-                // 從 30 句資料庫隨機抽取
+                // 每次都生成全新、真正隨機的金句！
                 const assignedQuote = goldQuotes[Math.floor(Math.random() * goldQuotes.length)];
                 const now = new Date();
                 const freedomVal = Math.floor(Math.random() * 15) + 75 + Math.min(10, Math.floor(currentDay / 3));
@@ -626,47 +610,41 @@
                     distance: distanceVal
                 };
 
-                // 推入歷史陣列並存檔
+                // 存檔
                 logoutHistory.push(newRecord);
-                localStorage.setItem('logout_day_v1', currentDay);
-                localStorage.setItem('logout_last_date_v1', lastLoggedDate);
-                localStorage.setItem('logout_history_v1', JSON.stringify(logoutHistory));
+                localStorage.setItem('logout_day_v1_unlocked', currentDay);
+                localStorage.setItem('logout_history_v1_unlocked', JSON.stringify(logoutHistory));
 
                 updateProgressUI();
 
-                // 打開結果彈窗
+                // 開啟新傳輸單
                 openVoucher(newRecord, false);
             }, 800);
         });
 
-        // 開啟登出憑證（通用渲染函式）
+        // 開啟登出憑證
         function openVoucher(record, isHistorical = false) {
-            // UI 自適應調整 (歷史 vs 今日)
             if (isHistorical) {
                 modalTitle.innerText = `地球登出證書 (歷史存檔)`;
                 modalCornerTag.innerText = `COSMIC RECORD - DAY ${record.day}`;
                 voucherHeader.innerText = `Retroactive Passport Log`;
             } else {
                 modalTitle.innerText = `地球登出成功傳輸單`;
-                modalCornerTag.innerText = `COSMIC PASSPORT v1.1`;
+                modalCornerTag.innerText = `COSMIC PASSPORT v1.2`;
                 voucherHeader.innerText = `Daily Logout Voucher`;
             }
 
-            // 設定特定天數的內容
             quoteContent.innerText = `「${record.quote}」`;
             transmissionDate.innerText = record.date;
             statFreedom.innerText = `${record.freedom}%`;
             statBurnout.innerText = `${record.burnout}%`;
             congratsMessage.innerText = `你與地球的距離增加了 ${record.distance} 萬光年 🚀`;
 
-            // 在分享按鈕上記錄天數
             copyBtn.setAttribute('data-target-day', record.day);
 
-            // 顯現彈窗
             stampModal.classList.remove('pointer-events-none', 'opacity-0');
             stampModal.classList.add('opacity-100');
 
-            // 延遲落印與鋼印音效
             passportStamp.className = "w-16 h-16 border-2 border-dashed border-pink-500 text-pink-500 font-black rounded-full text-xs flex items-center justify-center transform rotate-12 scale-150 opacity-0 uppercase tracking-tighter";
             setTimeout(() => {
                 passportStamp.className = "w-16 h-16 border-2 border-dashed border-pink-500 text-pink-500 font-black rounded-full text-xs flex items-center justify-center transform rotate-12 scale-100 opacity-100 animate-stamp uppercase tracking-tighter";
@@ -705,16 +683,12 @@
         // 複製分享文案
         copyBtn.addEventListener('click', () => {
             const targetDay = copyBtn.getAttribute('data-target-day') || currentDay;
-            const record = logoutHistory.find(h => h.day == targetDay) || {
-                quote: quoteContent.innerText,
-                freedom: statFreedom.innerText,
-                burnout: statBurnout.innerText,
-                distance: congratsMessage.innerText.split(' ')[4] || '1000'
-            };
+            const record = logoutHistory.find(h => h.day == targetDay);
+
+            if (!record) return;
 
             const shareText = `【🌌 地球登出成功傳輸單】\n\n這是我嘗試登出地球的第 ${targetDay} 天。\n今日自由指數：${record.freedom}% | 內耗殘留：${record.burnout}%\n\n今日誓言：\n${record.quote}\n\n🛰️ 離地距離：${record.distance} 萬光年。\n你也想登出地球嗎？一起加入宇宙牛馬漩渦吧。`;
             
-            // 使用 iframe 相容的複製方案
             const tempTextArea = document.createElement("textarea");
             tempTextArea.value = shareText;
             document.body.appendChild(tempTextArea);
@@ -737,7 +711,7 @@
 
         // ==================== 6. Debug 調試與重置按鈕 ====================
         
-        // 快速模擬下一天（跳過天數限制，連動資料庫增加）
+        // 快速模擬下一天（一鍵直升，毫無卡頓）
         cheatBtn.addEventListener('click', () => {
             if (currentDay >= 30) {
                 alert("你已經完全登出地球囉！");
@@ -745,13 +719,9 @@
             }
             
             currentDay++;
-            // 清空今日已簽限制，以便連續調試
-            lastLoggedDate = '';
-            
             const mockDate = new Date();
             mockDate.setDate(mockDate.getDate() - (30 - currentDay));
             
-            // 隨機抽取金句
             const assignedQuote = goldQuotes[Math.floor(Math.random() * goldQuotes.length)];
             const freedomVal = Math.floor(Math.random() * 15) + 75 + Math.min(10, Math.floor(currentDay / 3));
             const burnoutVal = 100 - freedomVal;
@@ -767,24 +737,19 @@
             };
 
             logoutHistory.push(newRecord);
-            localStorage.setItem('logout_day_v1', currentDay);
-            localStorage.removeItem('logout_last_date_v1'); // 重置當天簽到鎖定
-            localStorage.setItem('logout_history_v1', JSON.stringify(logoutHistory));
+            localStorage.setItem('logout_day_v1_unlocked', currentDay);
+            localStorage.setItem('logout_history_v1_unlocked', JSON.stringify(logoutHistory));
             
             updateProgressUI();
-            
-            // 自動開啟歷史紀錄單
             openVoucher(newRecord, false);
         });
 
         // 重置宇宙紀錄
         function resetUniverse() {
             currentDay = 0;
-            lastLoggedDate = '';
             logoutHistory = [];
-            localStorage.removeItem('logout_day_v1');
-            localStorage.removeItem('logout_last_date_v1');
-            localStorage.removeItem('logout_history_v1');
+            localStorage.removeItem('logout_day_v1_unlocked');
+            localStorage.removeItem('logout_history_v1_unlocked');
             updateProgressUI();
             finalEndingScreen.classList.add('pointer-events-none', 'opacity-0');
             finalEndingScreen.classList.remove('opacity-100');
